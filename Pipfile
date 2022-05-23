@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+djoser = "*"
+ipython = "*"
+django-cors-headers = "*"
+drf-yasg = "*"
+django-environ = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+
+[scripts]
+server           = "python biblio/manage.py runserver 0.0.0.0:8000"
+manage           = "python biblio/manage.py"
+genkey           = "openssl rand -base64 32"
