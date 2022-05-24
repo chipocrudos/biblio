@@ -147,7 +147,7 @@ class BookItem(models.Model):
     library = models.ForeignKey('library.Library', on_delete=models.CASCADE)
 
     def __str__(self):
-        return '{}, {}'.format(self.barcode, self.book.isbn)
+        return '{} - {}'.format(self.barcode, self.book.isbn)
 
     class Meta:
         managed = True
@@ -163,4 +163,4 @@ class BookItem(models.Model):
                 total
             )
 
-        super().save(*args, **kwargs)
+        super(BookItem, self).save(*args, **kwargs)

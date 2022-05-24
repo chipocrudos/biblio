@@ -14,6 +14,21 @@ Requerimientos:
 > django-environ
 
 
+Variables de entorno copiar env_example a .env
+
+```bash
+DEBUG=True
+SECRET_KEY=
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=sqlite:///${PWD}/biblio/db.sqlite3
+DJANGO_ADMINS=Nombre Completo <correo@electronico.com>
+DEFAULT_FROM_EMAIL=otrocorreo@electronico.com
+EMAIL_URL=smtp+tls://email:pass@smtp.gmail.com:587
+CORS_DOMAINS=http://localhost:3000,http://127.0.0.1:3000
+ACCESS_TOKEN_LIFETIME=1
+REFRESH_TOKEN_LIFETIME=7
+```
+
 
 Volcar datos de prueba
 ```bash

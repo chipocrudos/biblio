@@ -10,7 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from datetime import timedelta
+from email.utils import getaddresses
 from pathlib import Path
+
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-md(kqx!r*hm370=y(lman@vr=38)+uo8&idy4laqpz1!t2slg4'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = tuple(env.list('ALLOWED_HOSTS', default=[]))
 
 
 # Application definition
@@ -81,12 +89,8 @@ WSGI_APPLICATION = 'biblio.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': env.db(),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -133,3 +137,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Definir modelo de usuario
 AUTH_USER_MODEL = 'users.UserProfile'
 
+# Default site
+SITE_ID = 1
+
+# Config email send
+if env('DEBUG'):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_CONFIG = env.email_url('EMAIL_URL')
+    vars().update(EMAIL_CONFIG)
+
+# Config mail admin
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+ADMINS = getaddresses([env('DJANGO_ADMINS')])
+
+# Config restframework
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated'
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    )
+}
+
+# CORS domain
+CORS_ALLOWED_ORIGINS = tuple(env.list('CORS_DOMAINS', default=[]))
+CORS_ORIGIN_WHITELIST = tuple(env.list('CORS_DOMAINS', default=[]))
+
+# Simple jwt configuration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+                                days=int(env('ACCESS_TOKEN_LIFETIME'))),
+    'REFRESH_TOKEN_LIFETIME': timedelta(
+                                days=int(env('REFRESH_TOKEN_LIFETIME'))),
+}
